@@ -29,8 +29,10 @@
 #include "EefcFlash.h"
 
 #include <assert.h>
-#include <unistd.h>
 #include <stdio.h>
+
+#include <chrono>
+#include <thread>
 
 #define EEFC_KEY        0x5a
 
@@ -332,7 +334,7 @@ EefcFlash::waitFSR(int seconds)
         }
         if (fsr0 & fsr1 & 0x1)
             break;
-        usleep(1000);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     if (tries == 0)
         throw FlashTimeoutError();

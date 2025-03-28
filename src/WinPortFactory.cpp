@@ -29,6 +29,8 @@
 #include "WinPortFactory.h"
 #include "WinSerialPort.h"
 
+#include <vector>
+
 #define USB_DEVICE_NAME "\\Device\\USB"
 
 WinPortFactory::WinPortFactory() :
@@ -102,14 +104,14 @@ WinPortFactory::begin()
     if (size < 1)
         return error();
 
-    GUID guids[size];
+    std::vector<GUID> guids(size);
 
-    if (!SetupDiClassGuidsFromNameA("Ports", guids, size * sizeof(GUID), &size))
+    if (!SetupDiClassGuidsFromNameA("Ports", guids.data(), size * sizeof(GUID), &size))
     {
         return error();
     }
 
-    _devInfo = SetupDiGetClassDevs(guids, NULL, NULL, DIGCF_PRESENT);
+    _devInfo = SetupDiGetClassDevs(guids.data(), NULL, NULL, DIGCF_PRESENT);
     if(_devInfo == INVALID_HANDLE_VALUE)
         return error();
 
